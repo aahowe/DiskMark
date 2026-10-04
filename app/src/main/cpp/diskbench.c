@@ -116,19 +116,19 @@ static void *worker_main(void *arg) {
 }
 
 JNIEXPORT void JNICALL
-Java_com_example_diskmark_bench_NativeBench_cancel(JNIEnv *env, jclass clazz) {
+Java_com_howe_diskmark_bench_NativeBench_cancel(JNIEnv *env, jclass clazz) {
     atomic_store(&g_cancel, 1);
 }
 
 JNIEXPORT void JNICALL
-Java_com_example_diskmark_bench_NativeBench_resetCancel(JNIEnv *env, jclass clazz) {
+Java_com_howe_diskmark_bench_NativeBench_resetCancel(JNIEnv *env, jclass clazz) {
     atomic_store(&g_cancel, 0);
 }
 
 // Creates (or recreates) the test file filled with incompressible data.
 // Returns 0 on success, otherwise an errno value.
 JNIEXPORT jint JNICALL
-Java_com_example_diskmark_bench_NativeBench_prepareFile(JNIEnv *env, jclass clazz,
+Java_com_howe_diskmark_bench_NativeBench_prepareFile(JNIEnv *env, jclass clazz,
                                                          jstring jpath, jlong size) {
     const char *path = (*env)->GetStringUTFChars(env, jpath, NULL);
     int direct;
@@ -160,7 +160,7 @@ Java_com_example_diskmark_bench_NativeBench_prepareFile(JNIEnv *env, jclass claz
 // Runs one benchmark pass. Result array layout:
 // [0] bytes transferred, [1] operations, [2] elapsed ns, [3] O_DIRECT used (1/0), [4] errno
 JNIEXPORT jlongArray JNICALL
-Java_com_example_diskmark_bench_NativeBench_run(JNIEnv *env, jclass clazz, jstring jpath,
+Java_com_howe_diskmark_bench_NativeBench_run(JNIEnv *env, jclass clazz, jstring jpath,
                                                  jboolean write, jboolean random, jint block_size,
                                                  jint queue_depth, jint threads, jlong file_size,
                                                  jlong duration_ms) {

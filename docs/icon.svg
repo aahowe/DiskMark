@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="18 18 72 72">
+  <!-- Mirrors res/drawable/ic_launcher_*.xml, cropped to the adaptive-icon visible area. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#34B05A"/>
+      <stop offset="1" stop-color="#145A29"/>
+    </linearGradient>
+    <clipPath id="r"><rect x="18" y="18" width="72" height="72" rx="16"/></clipPath>
+  </defs>
+  <g clip-path="url(#r)">
+    <rect x="0" y="0" width="108" height="108" fill="url(#bg)"/>
+    <path d="M37.03,74.97 A24,24 0 1,1 70.97,74.97" fill="none" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="6" stroke-linecap="round"/>
+    <path d="M37.03,74.97 A24,24 0 1,1 72.39,42.57" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
+    <path d="M69.32,45.14 L55.61,59.92 L52.39,56.08 Z" fill="#FFFFFF"/>
+    <circle cx="54" cy="58" r="5" fill="#FFFFFF"/>
+  </g>
+</svg>

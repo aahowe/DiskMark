@@ -20,7 +20,7 @@ from pathlib import Path
 from xml.sax.saxutils import escape
 
 APP = "com.howe.diskmark"
-ACTIVITY = f"{APP}/com.example.diskmark.MainActivity"
+ACTIVITY = f"{APP}/com.howe.diskmark.MainActivity"
 
 
 class TestFailure(Exception):

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Themed-icon layer: single colour, so the gauge track is drawn thinner instead of translucent. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Gauge track -->
+    <path
+        android:pathData="M37.03,74.97 A24,24 0 1,1 70.97,74.97"
+        android:strokeWidth="2"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="round" />
+    <!-- Gauge value -->
+    <path
+        android:pathData="M37.03,74.97 A24,24 0 1,1 72.39,42.57"
+        android:strokeWidth="6"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="round" />
+    <!-- Needle -->
+    <path
+        android:pathData="M69.32,45.14 L55.61,59.92 L52.39,56.08 Z"
+        android:fillColor="#FFFFFFFF" />
+    <!-- Hub -->
+    <path
+        android:pathData="M49,58 a5,5 0 1,0 10,0 a5,5 0 1,0 -10,0 Z"
+        android:fillColor="#FFFFFFFF" />
+</vector>
