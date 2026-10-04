@@ -1,0 +1,16 @@
+appId: com.howe.diskmark
+name: Launch shows all CrystalDiskMark rows
+tags: [smoke]
+---
+- launchApp:
+    clearState: true
+- assertVisible: "DiskMark"
+- assertVisible: { text: "All", childOf: { id: btn_all } }
+- assertVisible: "Read (MB/s)"
+- assertVisible: "Write (MB/s)"
+- assertVisible: "SEQ1M"
+- assertVisible: "RND4K"
+- assertVisible: "Q8T1"
+- assertVisible: "Q32T1"
+- assertVisible: { id: status, text: "Ready" }
+- takeScreenshot: 01_launch
