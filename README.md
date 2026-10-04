@@ -27,22 +27,22 @@ Android 手机存储测速 App，仿 CrystalDiskMark。
 
 <img src="docs/oneplus_plz110.png" width="300">
 
-## 工作流（Android CLI + Maestro）
+## 工作流（全部用 Android CLI）
 
 ```bash
 android create empty-activity --name=DiskMark --output=./DiskMark   # 创建工程
 android sdk install ndk/29.0.14206865 cmake/3.31.6                 # 安装 NDK
 android emulator create medium_phone && android emulator start medium_phone
-./scripts/e2e.sh                                                    # 单测 → 构建 → 安装 → Maestro
+./scripts/e2e.sh                                                    # 单测 → 构建 → 安装 → UI 测试
 BENCH=1 DEVICE=<serial> ./scripts/e2e.sh                            # 再跑完整测速，从 logcat 打印结果
 ```
 
-`scripts/e2e.sh` 依次执行：Gradle 单元测试并构建，`android run` 安装并启动，最后跑 `.maestro/` 下的全部 flow，JUnit 报告和截图输出到 `.maestro/out/`。
+`scripts/e2e.sh` 依次执行：Gradle 单元测试并构建，`android run` 安装并启动，再运行 `scripts/uitest.py`。连着多台设备时默认选真机，可以用 `DEVICE=` 指定。
 
-### Maestro 注意事项
-- Compose 的 `testTag` 要设置 `testTagsAsResourceId = true` 才会成为 Maestro 能用的 `id`。DropdownMenu 弹出的是独立窗口，要在它上面再设置一次
-- Button 的 id 在父节点上，文字在子节点上，所以选择器要写成 `{ text: "All", childOf: { id: btn_all } }`
-- 测试运行时进度条一直在动，Maestro 点击后会一直等界面稳定。需要立刻检查中间状态时，给 `tapOn` 加 `waitToSettleTimeoutMs`
-- `android layout` 会留一个 UiAutomation 进程常驻，它会导致 Maestro driver 启动超时。跑 Maestro 前先执行 `adb shell am force-stop com.android.cli.interact.instrumentation`
-- ColorOS 等定制系统不允许用 adb 执行 `pm clear`，所以 flow 里不用 `clearState`，改用 `stopApp`
-- ColorOS 默认会拦截 adb 安装 Maestro 的 driver（`Failure [-99]`）。需要在开发者选项里打开“USB 安装”，并在手机上确认安装弹窗
+### UI 测试（`scripts/uitest.py`）
+- `android layout` 读界面结构，`adb shell input tap` 点击，`android screen capture` 截图。除了 Android CLI 自带的 instrumentation，不需要在设备上装别的东西
+- 按 Compose `testTag` 找元素。`testTagsAsResourceId = true` 会把它变成 resource-id；DropdownMenu 弹出的是独立窗口，要在它上面再设置一次
+- 测试运行时进度条一直在动，`android layout` 默认会等界面静止，所以轮询状态时要加 `--no-idle`
+- 包含 4 个冒烟测试：启动、单项测试、全部测试并切换单位、中途停止。加 `--bench` 或设 `BENCH=1` 会再跑一次完整测速
+- JUnit 报告和截图输出到 `build/uitest/`；失败时会自动截一张 `FAIL_<test>.png`
+- 只跑指定测试：`python3 scripts/uitest.py --device <serial> test_cancel`

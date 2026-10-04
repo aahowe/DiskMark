@@ -157,7 +157,7 @@ private fun <T> Selector(
     ) {
       Text(label, maxLines = 1)
     }
-    // Popups are separate windows, so the resource-id flag must be re-applied for Maestro.
+    // Popups are separate windows, so the resource-id flag must be re-applied for `android layout`.
     DropdownMenu(
       expanded = expanded,
       onDismissRequest = { expanded = false },

@@ -1,3 +1,0 @@
-# Smoke flows only; the long benchmark lives in bench/ and runs with BENCH=1.
-flows:
-  - "*.yaml"

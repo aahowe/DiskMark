@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
     setContent {
       DiskMarkTheme {
-        // Expose Compose test tags as resource ids so Maestro / UiAutomator can select them by id.
+        // Expose Compose test tags as resource ids so `android layout` (UiAutomator) can find them by id.
         Surface(modifier = Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }, color = MaterialTheme.colorScheme.background) {
           MainScreen(modifier = Modifier.safeDrawingPadding().padding(16.dp))
         }

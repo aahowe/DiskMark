@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
-# Build -> unit test -> install/launch (android CLI) -> Maestro UI flows.
+# Build -> unit test -> install/launch (android CLI) -> UI tests (android CLI, scripts/uitest.py).
 #   DEVICE=<serial>  target device (default: first physical device, else first emulator)
-#   BENCH=1          also run the full benchmark flow and print results
+#   BENCH=1          also run the full benchmark and print results
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 AVD="${AVD:-medium_phone}"
-OUT=".maestro/out"
 
 devices() { adb devices | awk 'NR>1 && $2=="device" {print $1}'; }
 
@@ -26,19 +25,7 @@ echo "==> Unit tests + assemble"
 echo "==> Install & launch"
 android run --device="$DEVICE" --apks=app/build/outputs/apk/debug/app-debug.apk
 
-# `android layout` leaves a UiAutomation instrumentation server running, which
-# blocks Maestro's driver from starting. Stop it before running flows.
-adb -s "$DEVICE" shell am force-stop com.android.cli.interact.instrumentation || true
-
-echo "==> Maestro smoke flows"
-rm -rf "$OUT" && mkdir -p "$OUT"
-maestro --device "$DEVICE" test --format junit --output "$OUT/report.xml" --test-output-dir "$OUT" .maestro "$@"
-
-if [[ "${BENCH:-0}" == "1" ]]; then
-  echo "==> Maestro full benchmark (takes a few minutes)"
-  adb -s "$DEVICE" logcat -c
-  maestro --device "$DEVICE" test --test-output-dir "$OUT/bench" .maestro/bench/benchmark.yaml
-  echo "==> Results"
-  adb -s "$DEVICE" logcat -d -s DiskMark:I | grep -E "CONFIG|RESULT" | sed 's/^.*DiskMark *: //'
-fi
-echo "==> Report: $OUT/report.xml  Screenshots: $OUT"
+echo "==> UI tests"
+args=(--device "$DEVICE")
+[[ "${BENCH:-0}" == "1" ]] && args+=(--bench)
+python3 scripts/uitest.py "${args[@]}" "$@"
