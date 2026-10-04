@@ -3,6 +3,7 @@ package com.example.diskmark.ui.main
 import android.app.Application
 import android.os.StatFs
 import android.system.Os
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.diskmark.bench.BenchTest
@@ -11,6 +12,7 @@ import com.example.diskmark.bench.Measurement
 import com.example.diskmark.bench.NativeBench
 import com.example.diskmark.bench.ResultUnit
 import java.io.File
+import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -52,6 +54,8 @@ data class MainUiState(
     get() = status is RunStatus.Running
 }
 
+private const val TAG = "DiskMark"
+
 class MainScreenViewModel(application: Application) : AndroidViewModel(application) {
   private val testDir: File = application.filesDir
   private val testFile = File(testDir, "diskmark.tmp")
@@ -89,6 +93,7 @@ class MainScreenViewModel(application: Application) : AndroidViewModel(applicati
         try {
           withContext(Dispatchers.IO) { execute(tests, config) }
           _uiState.update { it.copy(status = RunStatus.Done) }
+          logResults(tests)
         } catch (e: BenchmarkException) {
           _uiState.update { it.copy(status = RunStatus.Failed(e.message ?: "I/O error")) }
         } catch (e: kotlinx.coroutines.CancellationException) {
@@ -144,6 +149,28 @@ class MainScreenViewModel(application: Application) : AndroidViewModel(applicati
       )
     if (r[4] != 0L) throw BenchmarkException(r[4].toInt(), "I/O error: ${Os.strerror(r[4].toInt())}")
     return Measurement(bytes = r[0], ops = r[1], elapsedNs = r[2], directIo = r[3] == 1L)
+  }
+
+  /** Machine-readable summary for scripts: `adb logcat -s DiskMark`. */
+  private fun logResults(tests: List<BenchTest>) {
+    val state = _uiState.value
+    Log.i(TAG, "CONFIG size=${state.sizeMb}MiB count=${state.count} duration=${state.durationSec}s directIo=${state.directIo}")
+    for (test in tests) {
+      val r = state.results[test.id] ?: continue
+      Log.i(
+        TAG,
+        String.format(
+          Locale.US,
+          "RESULT %-6s %-6s read=%.2fMB/s %.0fIOPS write=%.2fMB/s %.0fIOPS",
+          test.label,
+          test.queueLabel,
+          r.read?.mbPerSec ?: 0.0,
+          r.read?.iops ?: 0.0,
+          r.write?.mbPerSec ?: 0.0,
+          r.write?.iops ?: 0.0,
+        ),
+      )
+    }
   }
 
   private fun best(a: Measurement?, b: Measurement) = if (a == null || b.mbPerSec > a.mbPerSec) b else a

@@ -1,0 +1,22 @@
+appId: com.howe.diskmark
+name: Full benchmark (1GiB, 3 passes, 3s)
+---
+# No clearState: some OEM ROMs (e.g. ColorOS) forbid `pm clear` over adb, and the app keeps no persisted state.
+- launchApp:
+    stopApp: true
+- tapOn: { id: select_count }
+- tapOn: { id: option_count_3 }
+- tapOn: { id: select_size }
+- tapOn: { id: option_size_1024 }
+- tapOn: { id: select_duration }
+- tapOn: { id: option_duration_3 }
+- tapOn:
+    id: btn_all
+    waitToSettleTimeoutMs: 500
+- extendedWaitUntil:
+    visible: { id: status, text: "Done" }
+    timeout: 600000
+- takeScreenshot: benchmark_mbs
+- tapOn: { id: select_unit }
+- tapOn: { id: option_unit_IOPS }
+- takeScreenshot: benchmark_iops

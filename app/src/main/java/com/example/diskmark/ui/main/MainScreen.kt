@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -120,8 +121,9 @@ internal fun MainScreen(
           colors = ButtonDefaults.buttonColors(containerColor = Green),
         ) {
           Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(test.label, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Text(test.queueLabel, fontSize = 13.sp)
+            // Shrink instead of wrapping when the system font scale is large.
+            Text(test.label, fontWeight = FontWeight.Bold, maxLines = 1, autoSize = TextAutoSize.StepBased(10.sp, 16.sp))
+            Text(test.queueLabel, maxLines = 1, autoSize = TextAutoSize.StepBased(9.sp, 13.sp))
           }
         }
         ResultCell(result?.read, test, state.unit, "read_${test.id}", Modifier.weight(1f))
@@ -194,10 +196,12 @@ private fun ResultCell(m: Measurement?, test: BenchTest, unit: ResultUnit, tag: 
     Box(Modifier.fillMaxHeight().fillMaxWidth(fill).align(Alignment.CenterStart).background(Green.copy(alpha = 0.35f)))
     Text(
       m.format(unit, test),
-      modifier = Modifier.padding(end = 10.dp).testTag(tag),
+      modifier = Modifier.padding(horizontal = 8.dp).testTag(tag),
       fontFamily = FontFamily.Monospace,
       fontWeight = FontWeight.Bold,
-      fontSize = 22.sp,
+      maxLines = 1,
+      textAlign = TextAlign.End,
+      autoSize = TextAutoSize.StepBased(10.sp, 22.sp),
       color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
   }

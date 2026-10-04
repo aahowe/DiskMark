@@ -2,8 +2,9 @@ appId: com.howe.diskmark
 name: Launch shows all CrystalDiskMark rows
 tags: [smoke]
 ---
+# No clearState: some OEM ROMs (e.g. ColorOS) forbid `pm clear` over adb, and the app keeps no persisted state.
 - launchApp:
-    clearState: true
+    stopApp: true
 - assertVisible: "DiskMark"
 - assertVisible: { text: "All", childOf: { id: btn_all } }
 - assertVisible: "Read (MB/s)"
